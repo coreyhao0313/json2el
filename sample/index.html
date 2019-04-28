@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>example</title>
+	<script src="../dist/json2el.js"></script>
+	<style>
+	</style>
+</head>
+<body>
+	<script>
+		let el = new El(document.body, [{
+				name: 'h1',
+				tag: 'h1',
+				text: 'hello, world'
+			},
+			{
+				tag: 'div',
+				child: '$data.intro'
+			}
+		])
+		.setVal({
+			'intro': []
+		});
+
+		let curms = 0;
+		let mainSteps = [
+			()=>{
+				el.$data.intro.push({
+					tag: 'h3',
+					text: 'this is a sample!'
+				});
+			},
+			()=>{
+				el.$data.intro.push({
+					tag: 'h3',
+					text: 'u can easy binding data by this tool'
+				});
+				curms = 2000;
+			},
+			()=>{
+				el.$data.intro.push({
+					tag: 'h3',
+					text: 'let\'s start to see how'
+				});
+				setTimeout(()=>{
+					doStep([()=>el.$data.intro.shift(), ()=>el.$data.intro.shift(), ()=>el.$data.intro.shift()],500);
+
+					el.$data.intro.push({
+						tag: 'h3',
+						text: 'first'
+					});
+				}, 500);
+				curms = 700;
+			},
+			()=>{
+				el.$data.intro.push({
+					tag: 'h3',
+					child: [
+						{
+							tag: 'span',
+							text: 'new',
+							attr: {style: 'color:red;'}
+						},
+						' El',
+						{
+							tag: 'span',
+							text: '$data.intro2'
+						}
+					]
+				});
+				doStep([()=>el.$data.intro2 = '(dom, array/json)'], 500);
+				curms = 1500;
+			},
+			()=>{
+				el.$data.intro.push({
+					tag: 'h3',
+					text: 'so what content of json is?'
+				});
+			},
+			()=>{
+				el.$data.intro.push({
+					tag: 'h3',
+					text: 'that is like..'
+				});
+				curms = 800;
+			},
+			()=>{
+				el.$data.intro.push({
+					tag: 'pre',
+					text: `
+	{
+		name: 'h1',
+		tag: 'h1',
+		text: 'hello, world',
+		child: '$data.intro' // when u binded
+	}`
+				});
+			}
+		];
+
+
+		doStep(mainSteps, 1000);
+
+		function doStep(steps, ms){
+			setTimeout(()=>{
+				steps.shift()();
+				steps.length && doStep(steps, curms || ms);
+			}, ms);
+		}
+	</script>
+</body>
+</html>
